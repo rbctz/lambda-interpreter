@@ -95,8 +95,6 @@ parseLambda :: String -> Lambda
 parseLambda input =
   case parse lambdaExpr input of
     Just (expr, "") -> expr
-    Just (_, leftover) -> error $ "Parser did not consume entire input: " ++ leftover
-    Nothing -> error "Failed to parse lambda expression"
 
 -- 3.3. placeholder
 parseLine :: String -> Either String Line

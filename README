@@ -1,0 +1,59 @@
+-- 1.1.
+vars :: Lambda -> [String]
+vars = nub . go
+  where
+    go (Var x) = [x]
+    go (App e1 e2) = go e1 ++ go e2
+    go (Abs x e) = x : go e
+    go (Macro _) = []
+
+
+This function works by:
+
+For variables (Var x), it simply returns the variable name
+For applications (App e1 e2), it collects variables from both expressions
+For abstractions (Abs x e), it includes the variable x along with all variables from the body e
+For macros, it returns an empty list since macros aren't variables
+The outer nub function (already imported from Data.List) removes any duplicate variable names, ensuring each name appears only once in the result.
+
+-- 1.2.
+freeVars :: Lambda -> [String]
+freeVars e = nub $ go e []
+  where
+    go :: Lambda -> [String] -> [String]
+    go (Var x) bound = if x `elem` bound then [] else [x]
+    go (App e1 e2) bound = go e1 bound ++ go e2 bound
+    go (Abs x e) bound = go e (x:bound)
+    go (Macro _) _ = []
+
+The implementation works by:
+
+Starting with an empty list of bound variables
+For each variable encountered:
+If it's in the bound list, it's not free (return empty list)
+Otherwise, it's free (return it as a singleton list)
+For applications, collect free variables from both subexpressions
+For abstractions, add the bound variable to the tracking list before checking the body
+For macros, return an empty list
+The outer nub ensures each free variable appears only once in the result, even if it appears in multiple contexts in the expression.
+
+-- 1.3.
+newVar :: [String] -> String
+newVar used = head $ dropWhile (`elem` used) candidates
+  where
+    candidates = concat [strings n | n <- [1..]]
+    strings n = sequence (replicate n ['a'..'z'])
+
+This implementation:
+
+Generates all possible strings using lowercase letters, organized by length:
+
+First all 1-character strings ('a' through 'z')
+Then all 2-character strings ('aa', 'ab', ..., 'zz')
+Then 3-character strings, and so on
+The sequence function combines the repeated alphabet lists to create all combinations of the specified length
+
+We concatenate all these lists of strings with increasing length
+
+Finally, we take the first string not in the used list
+

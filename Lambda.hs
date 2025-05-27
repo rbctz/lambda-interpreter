@@ -49,6 +49,7 @@ newVar used = head $ dropWhile (`elem` used) candidates
 
 -- Checks if an expression is in normal form (contains no redexes)
 isNormalForm :: Lambda -> Bool
+-- folosirea functiei aux containsRedex
 isNormalForm expr = not (containsRedex expr)
   where
     containsRedex (App (Abs _ _) _) = True

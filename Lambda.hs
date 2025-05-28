@@ -104,7 +104,9 @@ containsRedex = not . isNormalForm
 -- Applies a reduction strategy until normal form, returning all intermediate steps
 simplify :: (Lambda -> Lambda) -> Lambda -> [Lambda]
 simplify step expr 
+  -- daca se afla in forma normala, o returnam
   | isNormalForm expr = [expr]
+  -- daca nu, mai aplicam un pas
   | otherwise = expr : simplify step (step expr)
 
 -- Convenience functions for normal and applicative order reduction
